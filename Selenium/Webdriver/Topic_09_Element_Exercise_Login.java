@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 
-public class Topic_09_Element_Exercise {
+public class Topic_09_Element_Exercise_Login {
     WebDriver driver;
 
     @BeforeClass
@@ -127,7 +127,7 @@ public class Topic_09_Element_Exercise {
     public void TC_03_Login_Empty() {
         driver.get("https://live.techpanda.org/");
         driver.findElement(By.cssSelector("div.footer a[title='My Account']")).click();
-        // Bỏ trông email + password
+        // Bỏ trống email + password
         driver.findElement(By.cssSelector("input#email")).clear();
         driver.findElement(By.cssSelector("input#pass")).clear();
         // Click login
@@ -135,6 +135,48 @@ public class Topic_09_Element_Exercise {
         // Verify
         Assert.assertEquals(driver.findElement(By.cssSelector("div#advice-required-entry-email")).getText(),"This is a required field.");
         Assert.assertEquals(driver.findElement(By.cssSelector("div#advice-required-entry-pass")).getText(),"This is a required field.");
+    }
+
+    @Test
+    public void TC_04_Login_Invalid_Email() {
+        driver.get("https://live.techpanda.org/");
+        driver.findElement(By.cssSelector("div.footer a[title='My Account']")).click();
+        // Nhập invalid email
+        driver.findElement(By.cssSelector("input#email")).sendKeys("123434234@12312.123123");
+        driver.findElement(By.cssSelector("input#pass")).sendKeys("123456");
+        // Click login
+        driver.findElement(By.cssSelector("button#send2")).click();
+        // Verify
+        Assert.assertEquals(driver.findElement(By.cssSelector("div#advice-validate-email-email")).getText(),
+                "Please enter a valid email address. For example johndoe@domain.com.");
+    }
+
+    @Test
+    public void TC_05_Login_Invalid_Password() {
+        driver.get("https://live.techpanda.org/");
+        driver.findElement(By.cssSelector("div.footer a[title='My Account']")).click();
+        // Nhập invalid password
+        driver.findElement(By.cssSelector("input#email")).sendKeys("automation@gmail.com");
+        driver.findElement(By.cssSelector("input#pass")).sendKeys("123");
+        // Click login
+        driver.findElement(By.cssSelector("button#send2")).click();
+        // Verify
+        Assert.assertEquals(driver.findElement(By.cssSelector("div#advice-validate-password-pass")).getText(),
+                "Please enter 6 or more characters without leading or trailing spaces.");
+    }
+
+    @Test
+    public void TC_06_Login_Incorrect() {
+        driver.get("https://live.techpanda.org/");
+        driver.findElement(By.cssSelector("div.footer a[title='My Account']")).click();
+        // Nhập incorrect email + password
+        driver.findElement(By.cssSelector("input#email")).sendKeys("automation@gmail.com");
+        driver.findElement(By.cssSelector("input#pass")).sendKeys("123456");
+        // Click login
+        driver.findElement(By.cssSelector("button#send2")).click();
+        // Verify
+        Assert.assertEquals(driver.findElement(By.cssSelector("li.error-msg")).getText(),
+                "Invalid login or password.");
     }
 
     @AfterClass
